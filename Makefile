@@ -31,7 +31,7 @@ push: ## Pushes the Docker images
 upload-prod: stop remove-containers login build-prod push
 
 ssh-ec2:
-	ssh -i "portofolio2.pem" ec2-user@ec2-16-171-76-136.eu-north-1.compute.amazonaws.com
+	ssh -i "macos.pem" ec2-user@ec2-13-53-135-244.eu-north-1.compute.amazonaws.com
 
 stop:
 	@$(DOCKER_COMP) stop
