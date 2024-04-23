@@ -43,3 +43,6 @@ up-local:
 	@$(DOCKER_COMP) up -d
 local: stop remove-containers build-local up-local
 
+pull:
+    @$(DOCKER) pull mdnicolae/rmy-bg:latest
+
