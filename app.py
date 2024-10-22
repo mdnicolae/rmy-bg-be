@@ -2,8 +2,11 @@ import os
 import time
 from flask import Flask, request, send_file
 from rembg import remove, new_session
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app, origins=["https://unbgme.netlify.app", "https://unbg.be"])
 
 # Create session during container startup
 session = new_session(os.environ.get("SESSION_ID"))
