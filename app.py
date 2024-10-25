@@ -1,5 +1,8 @@
 import os
 import time
+import pyheif
+import io
+from PIL import Image  # Import Pillow for image processing
 
 from flask import Flask, request, send_file
 from rembg import remove, new_session
@@ -24,21 +27,39 @@ def upload_file():
     if file.filename == '':
         return "No selected file"
 
-    input = file.read()
-    # if file is type heif or heic, convert to png
+    input_data = file.read()
     name_lower = file.filename.lower()
-    # check if file type is supported
+
+    # Check if file type is supported
     supported_types = ['.png', '.jpg', '.jpeg', '.heif', '.heic']
     if not any(name_lower.endswith(t) for t in supported_types):
         return "Unsupported file type"
 
-    output = remove(input, session=session)
+    # If file is HEIC or HEIF, convert to PNG
+    if name_lower.endswith(('.heif', '.heic')):
+        heif_file = pyheif.read(input_data)
+        image = Image.frombytes(
+            heif_file.mode,
+            heif_file.size,
+            heif_file.data,
+            "raw",
+            heif_file.mode,
+            heif_file.stride,
+        )
+        # Convert to PNG and save to a bytes buffer
+        img_buffer = io.BytesIO()
+        image.save(img_buffer, format='PNG')
+        img_buffer.seek(0)  # Move the buffer cursor to the beginning
+        input_data = img_buffer.read()  # Read the PNG data into input_data
+
+    output = remove(input_data, session=session)
 
     output_path = 'output.png'
     with open(output_path, 'wb') as o:
         o.write(output)
 
     return send_file(output_path, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
