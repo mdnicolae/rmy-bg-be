@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app, origins=["https://unbgme.netlify.app", "https://unbg.be"])
+CORS(app, origins=["https://unbgme.netlify.app", "https://unbg.me"])
 
 # Create session during container startup
 session = new_session(os.environ.get("SESSION_ID"))
